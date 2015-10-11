@@ -17,7 +17,7 @@ class Video:
             self.duration = 0
 
     def __str__(self):
-        return json.dumps(self)
+        return json.dumps(self.__dict__)
 
 class Sound:
     def __init__(self, category, name):
@@ -25,7 +25,7 @@ class Sound:
         self.name = name
 
     def __str__(self):
-        return json.dumps(self)
+        return json.dumps(self.__dict__)
 
 class Skip:
     pass

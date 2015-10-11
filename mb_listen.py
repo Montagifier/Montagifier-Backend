@@ -1,7 +1,7 @@
 import http.server
 import socketserver
 import util
-from util import Video, Sound, Skip
+from util import Video, Sound, Skip, CheckIn, CheckOut
 
 _courier = None
 
@@ -33,13 +33,13 @@ class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
 
         req_obj = None
         
-        if req[0] == 'video':
+        if req[0] == 'video' and len(req) >= 2:
             req_obj = Video(req[1])
             if not req_obj.duration:
                 s.send_response(400)
                 s.end_headers()
                 return
-        elif req[0] == 'sound' and utils.search_sounds(req[1], req[2]):
+        elif req[0] == 'sound' and len(req) >= 3 and util.search_sounds(req[1], req[2]):
             req_obj = Sound(req[1], req[2])
         elif req[0] == 'skip':
             req_obj = Skip()

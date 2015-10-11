@@ -1,9 +1,10 @@
 import asyncio
 import websockets
 import time
+import threading
 from queue import Queue
 from collections import deque, OrderedDict
-from util import Video, Sound, Skip
+from util import Video, Sound, Skip, CheckIn, CheckOut
 
 CONN_MAX = 2048 
 QUEUE_MAX = 2048 
@@ -18,19 +19,19 @@ class State:
 
     @classmethod
     def register(cls, websocket):
-        if len(connections) > CONN_MAX:
+        if len(cls.connections) > CONN_MAX:
             websocket.close()
             return False
-        connections[websocket] = Queue()
+        cls.connections[websocket] = Queue()
         return True
 
     @classmethod
     def unregister(cls, websocket):
-        del connections[websocket]
+        del cls.connections[websocket]
 
     @classmethod
     def broadcast(cls, msg):
-        for conn, queue in connections:
+        for conn, queue in cls.connections.items():
             queue.put(msg)
 
     @classmethod
@@ -43,7 +44,8 @@ class State:
 
 @asyncio.coroutine
 def handler(websocket, path):
-    yield from websocket.send(str(Video))
+    if State.videos:
+        yield from websocket.send(str(videos[0]))
     if State.register(websocket):
         while True:
             update = None
@@ -59,7 +61,6 @@ def handler(websocket, path):
                 break
         State.unregister(websocket)
 
-@asyncio.coroutine
 def updater():
     while True:
         if State.videos and time > State.videos[0].duration:
@@ -92,12 +93,16 @@ def listen(courier, host, port):
     prctl.set_pdeathsig(signal.SIGKILL)
 
     State.courier = courier
-    start_server = websockets.serve(handler, host, port)
+    uthread = threading.Thread(target=updater, daemon=True)
+    uthread.start()
+
     print("Starting WebSocket Server...")
-    asyncio.async(updater())
+    start_server = websockets.serve(handler, host, port)
     try:
         asyncio.get_event_loop().run_until_complete(start_server)
         asyncio.get_event_loop().run_forever()
     except KeyboardInterrupt:
         return
+
+    uthread.join()
 
