@@ -1,6 +1,7 @@
 import http.server
 import socketserver
 import util
+import prctl
 from util import Video, Sound, Skip
 
 _courier = None
@@ -14,7 +15,7 @@ class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
         s.send_response(200)
         s.send_header("Content-type", "application/json")
         s.end_headers()
-        s.wfile.write(server_data.sounds_json)
+        s.wfile.write(util.sounds_json.encode('utf8'))
 
     def do_POST(s):
         global _courier
@@ -53,6 +54,8 @@ class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
         s.send_response(202)
 
 def listen(courier, host, port):
+    import signal
+    prctl.set_pdeathsig(signal.SIGKILL)
     global _courier
     _courier = courier
     print("Starting HTTP Server...")
