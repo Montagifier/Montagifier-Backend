@@ -1,44 +1,41 @@
-import http.server
-import socketserver
 import util
 from util import Video, Sound, Skip, CheckIn, CheckOut
+from flask import Flask, request
 
 _courier = None
 
-class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
+def listen(courier, host, port):
+    global _courier
+    _courier = courier
 
-    def do_GET(s):
-        s.send_response(200)
-        s.send_header("Content-type", "application/json")
-        s.end_headers()
-        s.wfile.write(util.sounds_json.encode('utf8'))
+    print("Starting HTTP Server...")
+    app = Flask(__name__)
 
-    def do_POST(s):
+    @app.route('/', methods=['GET'])
+    def get_handler():
+        data = util.sounds_json.encode('utf8')
+        return (data, 200, {'Content-type': 'application/json'})
+
+    @app.route('/', methods=['POST'])
+    def post_handler():
         global _courier
         if not _courier:
-            s.send_response(500)
-            s.end_headers()
-            return
+            return ('', 500)
 
         # Parse request
         try:
-            length = int(s.headers['Content-Length']) 
-            data = s.rfile.read(length).decode('utf-8')
+            data = request.get_data().decode('utf8')
             req = tuple(i.strip() for i in data.split(':'))
         except Exception as e:
-            s.send_response(400)
-            s.end_headers()
             print(e)
-            return
+            return ('', 400)
 
         req_obj = None
         
         if req[0] == 'video' and len(req) >= 2:
             req_obj = Video(req[1])
             if not req_obj.duration:
-                s.send_response(400)
-                s.end_headers()
-                return
+                return ('', 400)
         elif req[0] == 'sound' and len(req) >= 3 and util.search_sounds(req[1], req[2]):
             req_obj = Sound(req[1], req[2])
         elif req[0] == 'skip':
@@ -49,25 +46,13 @@ class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
             req_obj = CheckOut()
         else: 
             # Malformed request
-            s.send_response(400)
-            s.end_headers()
-            return
+            return ('', 400)
 
         _courier.put(req_obj)
-        s.send_response(202)
-        s.end_headers()
+        return ('', 202)
 
-def listen(courier, host, port):
-    import prctl, signal
-    prctl.set_pdeathsig(signal.SIGKILL)
-
-    global _courier
-    _courier = courier
-
-    print("Starting HTTP Server...")
-    httpd = socketserver.TCPServer((host, port), MobileRequestHandler)
     try:
-        httpd.serve_forever()
+        app.run(host=host, port=port)
     except KeyboardInterrupt:
         return
 

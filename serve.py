@@ -4,15 +4,16 @@ import ws_listen
 import mb_listen
 
 from multiprocessing import Process, Queue
+from threading import Thread
 
 if __name__ == '__main__':
     courier = Queue()
 
-    ws_server = Process(target=ws_listen.listen, args=(courier, '', 8765))
-    mb_server = Process(target=mb_listen.listen, args=(courier, '', 8080))
-
-    ws_server.start()
+    mb_server = Thread(target=mb_listen.listen, args=(courier, '', 8080))
     mb_server.start()
+
+    ws_server = Process(target=ws_listen.listen, args=(courier, '', 8765))
+    ws_server.start()
 
     try:
         ws_server.join()
