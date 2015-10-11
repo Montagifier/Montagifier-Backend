@@ -6,9 +6,6 @@ from xml.dom.minidom import parseString
 
 YT_URL = "https://www.youtube.com/get_video_info?video_id={0}"
 
-with open('yt_key', 'r') as f:
-    YT_KEY = f.read()
-
 class Video:
     def __init__(self, link):
         self.kind = 'video'

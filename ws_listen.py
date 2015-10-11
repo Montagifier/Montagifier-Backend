@@ -85,9 +85,6 @@ def updater():
         State.time += 1
 
 def listen(courier, host, port):
-    import prctl, signal
-    prctl.set_pdeathsig(signal.SIGKILL)
-
     State.courier = courier
     uthread = threading.Thread(target=updater, daemon=True)
     uthread.start()
