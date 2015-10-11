@@ -45,7 +45,7 @@ class State:
 @asyncio.coroutine
 def handler(websocket, path):
     if State.videos:
-        yield from websocket.send(str(videos[0]))
+        yield from websocket.send(str(State.videos[0]))
     if State.register(websocket):
         while True:
             update = None
@@ -63,7 +63,7 @@ def handler(websocket, path):
 
 def updater():
     while True:
-        if State.videos and time > State.videos[0].duration:
+        if State.videos and State.time > State.videos[0].duration:
             State.next_video()
 
         req = None
@@ -72,7 +72,7 @@ def updater():
         else:
             continue
 
-        if type(req) is Video and len(videos) < QUEUE_MAX:
+        if type(req) is Video and len(State.videos) < QUEUE_MAX:
             State.videos.append(req)
         elif type(req) is Sound:
             State.broadcast(req)
