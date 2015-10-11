@@ -8,13 +8,10 @@ _courier = None
 class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
 
     def do_GET(s):
-        handle_get(s, courier)
-
-    def do_GET(s):
         s.send_response(200)
         s.send_header("Content-type", "application/json")
         s.end_headers()
-        s.wfile.write(server_data.sounds_json)
+        s.wfile.write(util.sounds_json)
 
     def do_POST(s):
         global _courier
@@ -24,13 +21,15 @@ class MobileRequestHandler(http.server.BaseHTTPRequestHandler):
 
         # Parse request
         try:
-            req = tuple(i.strip() for i in s.rfile.read().split(':'))
-        except:
+            data = s.rfile.read(s.headers.getheader('content-length'))
+            req = tuple(i.strip() for i in data).split(':')
+        except Exception as e:
             s.send_response(400)
+            print(e.strerr)
             return
 
         req_obj = None
-
+        
         if req[0] == 'video':
             req_obj = Video(req[1])
             if not req_obj.duration:
