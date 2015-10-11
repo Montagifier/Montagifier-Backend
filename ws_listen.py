@@ -2,7 +2,7 @@ import asyncio
 import websockets
 import time
 import threading
-from queue import Queue
+from asyncio import Queue
 from collections import deque, OrderedDict
 from util import Video, Sound, Skip, CheckIn, CheckOut
 
@@ -48,12 +48,8 @@ def handler(websocket, path):
         yield from websocket.send(str(State.videos[0]))
     if State.register(websocket):
         while True:
-            update = None
-            if not State.connections[websocket].empty():
-                update = State.connections[websocket].get(block=False)
-            else:
-                continue
-                
+            update = yield from State.connections[websocket].get()
+
             if type(update) in (Video, Sound):
                 yield from websocket.send(str(update))
 
