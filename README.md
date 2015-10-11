@@ -6,7 +6,8 @@ Dependencies
 ------------
 
 Python 3.3+ (need asyncio)
-websockets Library
+
+websockets Package (https://pypi.python.org/pypi/websockets)
 
 Usage
 -----
