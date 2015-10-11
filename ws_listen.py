@@ -35,8 +35,9 @@ class State:
 
     @classmethod
     def next_video(cls):
-        cls.videos.popleft()
-        cls.broadcast(cls.videos[0])
+        if cls.videos:
+            cls.videos.popleft()
+            cls.broadcast(cls.videos[0])
         cls.time = 0
         cls.skip = 0
 
@@ -89,10 +90,14 @@ def updater():
 def listen(courier, host, port):
     import prctl, signal
     prctl.set_pdeathsig(signal.SIGKILL)
+
     State.courier = courier
     start_server = websockets.serve(handler, host, port)
     print("Starting WebSocket Server...")
     asyncio.async(updater())
-    asyncio.get_event_loop().run_until_complete(start_server)
-    asyncio.get_event_loop().run_forever()
+    try:
+        asyncio.get_event_loop().run_until_complete(start_server)
+        asyncio.get_event_loop().run_forever()
+    except KeyboardInterrupt:
+        return
 

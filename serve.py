@@ -14,5 +14,9 @@ if __name__ == '__main__':
     ws_server.start()
     mb_server.start()
 
-    ws_server.join()
-    mb_server.join()
+    try:
+        ws_server.join()
+        mb_server.join()
+    except KeyboardInterrupt:
+        print("Caught keyboard interrupt.")
+
