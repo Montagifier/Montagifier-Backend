@@ -87,6 +87,8 @@ def updater():
         State.time += 1
 
 def listen(courier, host, port):
+    import prctl, signal
+    prctl.set_pdeathsig(signal.SIGKILL)
     State.courier = courier
     start_server = websockets.serve(handler, host, port)
     print("Starting WebSocket Server...")
