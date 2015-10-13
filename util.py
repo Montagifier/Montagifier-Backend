@@ -7,7 +7,7 @@ from xml.dom.minidom import parseString
 
 YT_URL = "https://www.youtube.com/get_video_info?video_id={0}"
 
-class Video:
+class Video(object):
     def __init__(self, link):
         self.kind = 'video'
         self.link = link
@@ -26,7 +26,7 @@ class Video:
     def __str__(self):
         return json.dumps(self.__dict__)
 
-class Sound:
+class Sound(object):
     def __init__(self, category, name):
         self.kind = 'sound'
         self.category = category
@@ -35,20 +35,19 @@ class Sound:
     def __str__(self):
         return json.dumps(self.__dict__)
 
-class Skip:
+class Skip(object):
     pass
 
-class CheckIn:
+class CheckIn(object):
     pass
 
-class CheckOut:
+class CheckOut(object):
     pass
 
 def get_sounds(audiopath):
     sounds = {}
     for category in os.listdir(audiopath):
         category_path = os.path.join(audiopath, category)
-        print category_path
         if os.path.isdir(category_path):
             tracks = []
             for fname in os.listdir(category_path):

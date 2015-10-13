@@ -55,9 +55,6 @@ def updater(courier, server):
 def v_timer(server):
     global v_time, videos, playing
     while True:
-        print(videos, v_time, playing)
-        if len(videos) > 0:
-            print(videos[0].__dict__)
         time.sleep(0.2)
         if videos and playing:
             v_time += 0.2
