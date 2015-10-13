@@ -1,6 +1,6 @@
 import json
 import requests
-import urllib.parse
+import urlparse
 from datetime import timedelta
 from xml.dom.minidom import parseString
 
@@ -15,7 +15,7 @@ class Video:
             response = requests.get(YT_URL.format(link))
 
             obj = {}
-            for k, v in urllib.parse.parse_qsl(response.text):
+            for k, v in urlparse.parse_qsl(response.text):
                 obj[k] = v
             self.duration = int(obj['length_seconds'])
         except Exception as e:

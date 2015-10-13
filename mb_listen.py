@@ -1,10 +1,11 @@
 import util
+import threading
 from util import Video, Sound, Skip, CheckIn, CheckOut
 from flask import Flask, request
 
 _courier = None
 
-def listen(courier, host, port):
+def listen(courier, host, port, audiopath):
     global _courier
     _courier = courier
 
@@ -51,8 +52,7 @@ def listen(courier, host, port):
         _courier.put(req_obj)
         return ('', 202)
 
-    try:
-        app.run(host=host, port=port)
-    except KeyboardInterrupt:
-        return
+    t = threading.Thread(target=app.run, kwargs={'host': host, 'port': port})
+    t.daemon = True
+    t.start()
 

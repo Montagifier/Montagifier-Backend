@@ -1,6 +1,5 @@
-import time, queue, threading, json
+import time, threading, json
 from websocket_server import WebsocketServer
-from socketserver import ThreadingMixIn, TCPServer
 from collections import deque, OrderedDict
 from util import Video, Sound, Skip, CheckIn, CheckOut
 
@@ -70,14 +69,14 @@ def notify_client(client, server):
         server.send_message(client, json.dumps(data))
 
 def listen(courier, host, port):
-    import prctl, signal
-    prctl.set_pdeathsig(signal.SIGKILL)
-
     server = WebsocketServer(port)
     server.set_fn_new_client(notify_client)
 
-    uthread = threading.Thread(target=updater, args=(courier, server), daemon=True)
-    tthread = threading.Thread(target=v_timer, args=(server,), daemon=True)
+    uthread = threading.Thread(target=updater, args=(courier, server))
+    tthread = threading.Thread(target=v_timer, args=(server,))
+
+    uthread.daemon = True
+    tthread.daemon = True
 
     uthread.start()
     tthread.start()

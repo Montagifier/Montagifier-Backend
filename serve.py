@@ -1,23 +1,16 @@
 #!/usr/bin/python3
 
+import argparse
 import ws_listen
 import mb_listen
-
-from multiprocessing import Process, Queue
-from threading import Thread
+from Queue import Queue
 
 if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description='Montagifier Websocket and HTTP server')
+    parser.add_argument('AUDIOPATH', help='Path to audio files')
+
+    args = parser.parse_args()
+
     courier = Queue()
-
-    mb_server = Thread(target=mb_listen.listen, args=(courier, '', 8080))
-    mb_server.start()
-
-    ws_server = Process(target=ws_listen.listen, args=(courier, '', 8765))
-    ws_server.start()
-
-    try:
-        ws_server.join()
-        mb_server.join()
-    except KeyboardInterrupt:
-        print("Caught keyboard interrupt.")
-
+    mb_listen.listen(courier, '', 8080, args.AUDIOPATH)
+    ws_listen.listen(courier, '', 8765)
