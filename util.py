@@ -44,9 +44,65 @@ class CheckOut:
     pass
 
 sounds = { 
-            "Vaporwave" : ["Japanese", "420", "VHS"],
-            "Montage"   : ["Noscope", "Clip", "Darude"]
-         }
+    "Rocket Stone" : [
+        "Close One",
+        "Goal",
+        "Great Pass",
+        "I'm da Bess",
+        "Lucker",
+        "Murloc",
+        "My Magic",
+        "Nice Shot",
+        "No Problem",
+        "Thanks",
+        "Vuvuzela",
+        "Well Met",
+        "What a Save",
+        "Wowww"
+    ],
+    "Montage"   : [
+        "Airhorn",
+        "Camera",
+        "Hitmarker",
+        "Intervention",
+        "Smoke Weed",
+        "Triple",
+        "Wow"
+    ],
+    "Trap"      : [
+        "Click Clack",
+        "Damn Son",
+        "Flocka",
+        "Gun",
+        "Okay",
+        "Real Trap Shit",
+        "What",
+        "Woop"
+    ],
+    "Meme"      : [
+        "Deez Nutz",
+        "Hasta La Vista",
+        "Hold Mah Dick",
+        "I'll Be Back",
+        "John Cena"
+    ],
+    "Gaming"    : [
+        "Go Go Go",
+        "Leeroy Jenkins",
+        "Minerals",
+        "Overlords",
+        "Piece of Me",
+        "Pylons",
+        "Vespene"
+    ],
+    "Vaporwave" : [
+        "Tada",
+        "Windows 95",
+        "Windows Me",
+        "Windows XP",
+        "Xylophone"
+    ]
+ }
 
 sounds_json = json.dumps(sounds)
 
