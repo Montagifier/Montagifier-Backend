@@ -1,5 +1,7 @@
 import util
 import threading
+import traceback
+import json
 from util import Video, Sound, Skip, CheckIn, CheckOut
 from flask import Flask, request
 
@@ -14,8 +16,8 @@ def listen(courier, host, port, audiopath):
 
     @app.route('/', methods=['GET'])
     def get_handler():
-        data = util.sounds_json.encode('utf8')
-        return (data, 200, {'Content-type': 'application/json'})
+        data = util.get_sounds(audiopath)
+        return (json.dumps(data), 200, {'Content-type': 'application/json'})
 
     @app.route('/', methods=['POST'])
     def post_handler():

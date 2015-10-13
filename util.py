@@ -1,6 +1,7 @@
 import json
 import requests
 import urlparse
+import os
 from datetime import timedelta
 from xml.dom.minidom import parseString
 
@@ -43,68 +44,21 @@ class CheckIn:
 class CheckOut:
     pass
 
-sounds = { 
-    "Rocket Stone" : [
-        "Close One",
-        "Goal",
-        "Great Pass",
-        "I'm da Bess",
-        "Lucker",
-        "Murloc",
-        "My Magic",
-        "Nice Shot",
-        "No Problem",
-        "Thanks",
-        "Vuvuzela",
-        "Well Met",
-        "What a Save",
-        "Wowww"
-    ],
-    "Montage"   : [
-        "Airhorn",
-        "Camera",
-        "Hitmarker",
-        "Intervention",
-        "Smoke Weed",
-        "Triple",
-        "Wow"
-    ],
-    "Trap"      : [
-        "Click Clack",
-        "Damn Son",
-        "Flocka",
-        "Gun",
-        "Okay",
-        "Real Trap Shit",
-        "What",
-        "Woop"
-    ],
-    "Meme"      : [
-        "Deez Nutz",
-        "Hasta La Vista",
-        "Hold Mah Dick",
-        "I'll Be Back",
-        "John Cena"
-    ],
-    "Gaming"    : [
-        "Go Go Go",
-        "Leeroy Jenkins",
-        "Minerals",
-        "Overlords",
-        "Piece of Me",
-        "Pylons",
-        "Vespene"
-    ],
-    "Vaporwave" : [
-        "Tada",
-        "Windows 95",
-        "Windows Me",
-        "Windows XP",
-        "Xylophone"
-    ]
- }
+def get_sounds(audiopath):
+    sounds = {}
+    for category in os.listdir(audiopath):
+        category_path = os.path.join(audiopath, category)
+        print category_path
+        if os.path.isdir(category_path):
+            tracks = []
+            for fname in os.listdir(category_path):
+                fpath = os.path.join(category_path, fname)
+                if os.path.isfile(fpath) and fpath.endswith('.mp3'):
+                    tracks.append(fname.rsplit('.')[0])
 
-sounds_json = json.dumps(sounds)
+            sounds[category] = tracks
+
+    return sounds
 
 def search_sounds(category, name):
     for s in sounds[category]:
