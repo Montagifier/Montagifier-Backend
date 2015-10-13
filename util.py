@@ -55,7 +55,7 @@ def get_sounds(audiopath):
                 if os.path.isfile(fpath) and fpath.endswith('.mp3'):
                     tracks.append(fname.rsplit('.')[0])
 
-            sounds[category] = tracks
+            sounds[category] = sorted(tracks)
 
     return sounds
 
