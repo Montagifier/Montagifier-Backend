@@ -39,7 +39,7 @@ def listen(courier, host, port, audiopath):
             req_obj = Video(req[1])
             if not req_obj.duration:
                 return ('', 400)
-        elif req[0] == 'sound' and len(req) >= 3 and util.search_sounds(req[1], req[2]):
+        elif req[0] == 'sound' and len(req) >= 3 and util.search_sounds(audiopath, req[1], req[2]):
             req_obj = Sound(req[1], req[2])
         elif req[0] == 'skip':
             req_obj = Skip()

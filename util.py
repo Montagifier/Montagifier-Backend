@@ -60,7 +60,8 @@ def get_sounds(audiopath):
 
     return sounds
 
-def search_sounds(category, name):
+def search_sounds(audiopath, category, name):
+    sounds = get_sounds(audiopath)
     for s in sounds[category]:
         if s == name:
             return True
